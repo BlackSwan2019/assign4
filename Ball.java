@@ -32,7 +32,7 @@ class Ball {
         DataLine.Info dataInfo = new DataLine.Info(Clip.class, null);
 
         try {
-            sound = (Clip) mixer.getLine(dataInfo);
+            sound = (Clip) mixer.getLine(dataInfo);     // problem here
 
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File("bounce.wav"));
             System.out.println(audioStream.getFormat());
