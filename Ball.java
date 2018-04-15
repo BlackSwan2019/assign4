@@ -7,17 +7,30 @@ import java.awt.*;
 class Ball {
     private Color ballColor;    // color of ball
 
-    private int radius; // radius of ball
+    private int radius;         // radius of ball
 
-    private int x;      // upper left x coordinate of ball's bounding square
-    private int y;      // upper left y coordinate of ball's bounding square
+    private int x;              // upper left x coordinate of ball's bounding square
+    private int y;              // upper left y coordinate of ball's bounding square
 
-    private int dx;     // X-axis speed (pixels per repaint)
-    private int dy;     // Y-axis speed (pixels per repaint)
+    private int dx;             // X-axis speed (pixels per repaint)
+    private int dy;             // Y-axis speed (pixels per repaint)
 
-    private Clip sound;     // ball bouncing sound effect
+    private Clip soundX;        // ball bouncing sound effect
+    private Clip soundY;        // ball bouncing sound effect
 
+    /**
+     * Constructor for Ball class.
+     *
+     * @param   newColor    color of ball
+     * @param   newRadius   radius of ball
+     * @param   newX        starting X location of upper left corner of bounding square
+     * @param   newY        starting Y location of upper left corner of bounding square
+     * @param   newDx       how many pixels to travel on X-axis per repaint.
+     * @param   newDy       how many pixels to travel on Y-axis per repaint.
+     *
+     */
     Ball(Color newColor, int newRadius, int newX, int newY, int newDx, int newDy) {
+        // Set ball properties.
         ballColor = newColor;
 
         radius = newRadius;
@@ -27,40 +40,57 @@ class Ball {
         dx = newDx;
         dy = newDy;
 
-        Mixer.Info[] mixInfos = AudioSystem.getMixerInfo();
-        Mixer mixer = AudioSystem.getMixer(mixInfos[0]);
-        DataLine.Info dataInfo = new DataLine.Info(Clip.class, null);
-
         try {
-            sound = (Clip) mixer.getLine(dataInfo);     // problem here
+            // Set sound file names.
+            String soundNameX = "bounceY.wav";
+            String soundNameY = "bounceY.wav";
 
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(new File("bounce.wav"));
-            System.out.println(audioStream.getFormat());
+            // Open audio stream from file.
+            AudioInputStream audioInputStreamX = AudioSystem.getAudioInputStream(new File(soundNameX));
+            AudioInputStream audioInputStreamY = AudioSystem.getAudioInputStream(new File(soundNameY));
 
-            sound.open(audioStream);
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            // Open a clip and use audio stream for top and bottom walls.
+            soundX = AudioSystem.getClip();
+            soundX.open(audioInputStreamX);
+
+            // Open a clip and use audio stream for left and right walls.
+            soundY = AudioSystem.getClip();
+            soundY.open(audioInputStreamY);
+        } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
             e.printStackTrace();
         }
+  }
 
-    }
-
+    /**
+     * This method controls ball movement and whether to play a sound upon touching walls of canvas.
+     *
+     * @param   canvas      the animation panel
+     *
+     */
     void move(Dimension canvas) {
+        // If ball touches left or right wall, play bounce sound and reverse direction.
         if (x <= 0 || x >= (canvas.width - radius)) {
+            soundX.loop(1);
             dx *= -1;
-            sound.loop(1);
-            sound.stop();
         }
 
+        // If ball touches top or bottom wall, play bounce sound and reverse direction.
         if (y <= 0 || y >= (canvas.height - radius)) {
+            soundY.loop(1);
             dy *= -1;
-            sound.loop(1);
-            sound.stop();
         }
 
+        // Move ball by a certain x and y amount.
         x += dx;
         y += dy;
     }
 
+    /**
+     * This method draws the ball.
+     *
+     * @param   g      graphics template for a ball.
+     *
+     */
     void draw(Graphics g) {
         g.setColor(ballColor);
 
