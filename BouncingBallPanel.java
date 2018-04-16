@@ -10,8 +10,12 @@ import java.awt.event.ActionListener;
 class BouncingBallPanel extends JPanel {
     private JButton start = new JButton("Start");       // start button for animation
     private JButton stop = new JButton("Stop");         // stop button animation
+    private JButton faster = new JButton("Faster");         // stop button animation
+    private JButton slower = new JButton("Slower");         // stop button animation
 
     private AnimationPanel animationPanel = new AnimationPanel();   // balls will be animated on this panel
+
+    private Music song = new Music();
 
     /*
     * Constructor for BouncingBallPanel class.
@@ -27,8 +31,12 @@ class BouncingBallPanel extends JPanel {
         add(buttonPanel, BorderLayout.PAGE_START);
         buttonPanel.add(start);
         buttonPanel.add(stop);
+        buttonPanel.add(faster);
+        buttonPanel.add(slower);
         start.addActionListener(new startStopListener());
         stop.addActionListener(new startStopListener());
+        faster.addActionListener(new startStopListener());
+        slower.addActionListener(new startStopListener());
         stop.setEnabled(false);
 
         add(animationPanel, BorderLayout.CENTER);
@@ -46,17 +54,28 @@ class BouncingBallPanel extends JPanel {
         */
         @Override
         public void actionPerformed(ActionEvent e) {
-            // If Start button is clicked, disable Start, enable Stop button, and start animations.
-            if ((e.getActionCommand()).equalsIgnoreCase("Start")) {
+            // If Start button is clicked, disable Start button and enable Stop button and start animation.
+            if (e.getActionCommand().equalsIgnoreCase("Start")) {
                 start.setEnabled(false);
                 stop.setEnabled(true);
                 animationPanel.start();
+                song.start();
             }
-            // Else, enable Start button, disable Stop button, and stop animations.
-            else {
+            // Else if Stop button is clicked, disable Stop button and enable Star button and stop animation.
+            else if (e.getActionCommand().equalsIgnoreCase("Stop")) {
                 start.setEnabled(true);
                 stop.setEnabled(false);
                 animationPanel.stop();
+                song.stop();
+            }
+            // Else if Faster button is clicked, speed up animation.
+            else if (e.getActionCommand().equalsIgnoreCase("Faster")) {
+                if (animationPanel.speed - 2 >= 0)
+                    animationPanel.speed -= 2;
+            }
+            // Else if Slower button is clicked, slow down animation.
+            else if (e.getActionCommand().equalsIgnoreCase("Slower")) {
+                    animationPanel.speed += 2;
             }
         }
     }

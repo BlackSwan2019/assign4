@@ -14,6 +14,8 @@ class AnimationPanel extends JPanel implements Runnable {
 
     private Thread animationThread = null;                  // thread to wrap around the animation panel
 
+    int speed = 9;
+
     /**
      * Method for initializing and starting animation thread with AnimationPanel.
      *
@@ -47,7 +49,7 @@ class AnimationPanel extends JPanel implements Runnable {
         while (Thread.currentThread() == animationThread) {
             try{
                 // pause it and repaint it to move the balls.
-                Thread.sleep(10);
+                Thread.sleep(speed);
                 this.repaint();
             } catch (InterruptedException e) {
                 System.out.println("Thread error.");
